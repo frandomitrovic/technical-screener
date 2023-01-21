@@ -1,0 +1,15 @@
+@tailwind base;
+
+@tailwind components;
+
+@tailwind utilities;
+
+@layer utilities {
+    .bullish {
+        bg-green-500 text-slate-100
+    },
+
+    .bearish {
+        bg-red-500 text-slate-100
+    }
+  }

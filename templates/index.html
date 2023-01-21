@@ -1,0 +1,50 @@
+<html>
+    <head>
+        <title>Technical Screener</title>
+        <script src="https://cdn.tailwindcss.com"></script>
+    </head>
+
+    <body class="bg-gray-50">
+        <h1 class="flex text-3xl font-bold underline text-clifford">Technical Screener</h1>
+        <div class="inline-block relative w-64">
+            <form>
+                <select class="block appearance-none w-full bg-white border border-gray-400 hover:border-gray-500 px-4 py-2 pr-8 rounded shadow leading-tight focus:outline-none focus:shadow-outline" placeholder="Select a candlestick pattern" name="pattern">
+                    {% for pattern in patterns %}
+                        <option value="{{pattern}}" {% if pattern == current_pattern %} selected="selected"{% endif %}>{{patterns[pattern]}}</option>
+                    {% endfor %}
+                </select>
+                <input class="bg-blue-500 hover:bg-blue-700 text-white font-bold py-2 px-4 rounded" type="submit" value="scan" />
+            </form>
+
+            <table>
+                <tr>
+                    <th>
+                        Symbol
+                    </th>
+                    <th>
+                        Company Name
+                    </th>
+                    <th>
+                        Signal Type
+                    </th>
+                </tr>
+                {% for stock in stocks %}
+                    {% if stocks[stock][current_pattern] %}
+                    <tr>
+                        <td class="p-10">{{ stock }}</td>
+                        <td class="p-10">{{ stocks[stock]['company'] }}</td>
+                        <td class="{{ stocks[stock][current_pattern] }} p-10">{{ stocks[stock][current_pattern] }}</td>
+                    </tr>
+                         
+                    <tr>
+                        <td colspan="3">
+                            <img src="https://finviz.com/chart.ashx?t={{ stock }}&ty=c&ta=1&p=d&s=l" />
+                        </td>
+                    </tr>
+                        
+                    {% endif %}
+                {% endfor %}
+            <table>
+        </div>
+    </body>
+</html>
