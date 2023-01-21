@@ -9,9 +9,24 @@ import talib
 app = Flask(__name__)
 
 
+@ app.route("/snapshot")
+def snapshot():
+    with open('datasets/companies.csv') as f:
+            for line in f:
+                if "," not in line:
+                    continue
+                symbol = line.split(",")[0]
+                data = yf.download(
+                    symbol, start="2022-06-01", end="2023-01-19")
+                data.to_csv('datasets/daily/{}.csv'.format(symbol))
+
+    return {
+        'code' : 'success'
+    }
+
 @app.route("/")
 def index():
-    pattern = request.args.get('pattern', None)
+    pattern = request.args.get('pattern', False)
     stocks = {}
 
     with open('datasets/companies.csv')as f:
@@ -28,9 +43,8 @@ def index():
 
             try:
                 result = pattern_function(
-                    df['Open'], df['high'], df['low'], df['close'])
-                last = result.tail(1).values
-                print(last)
+                    df['Open'], df['High'], df['Low'], df['Close'])
+                last = result.tail(1).values[0]
                 if last > 0:
                     stocks[symbol][pattern] = 'bullish'
                 elif last < 0:
@@ -43,18 +57,5 @@ def index():
     return render_template('index.html', patterns=patterns, stocks=stocks, current_pattern=pattern)
 
 
-@ app.route("/snapshot")
-def snapshot():
-    with open('datasets/companies.csv') as f:
-        companies = f.read().splitlines()
-        for company in companies:
-            symbol = company.split(',')[0]
-            df = yf.download(symbol, start="2021-01-01",
-                             end="2021-08-01", threads=True)
-            df.to_csv('datasets/daily/{}.csv'.format(symbol))
-
-    return {
-        'code': 'success'
-    }
 
     
